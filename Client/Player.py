@@ -175,7 +175,6 @@ class Player:
         if self.y == 90:
             self.FALLING = False
             self.jumpacc = 5
-        print(self.jumpacc)
         self.frames()
         delay(0.01)
 

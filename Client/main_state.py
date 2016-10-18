@@ -62,11 +62,13 @@ def handle_events():
             game_framework.change_state(title_state)
         else:
             player.handle_inputs(event)
+            background.handle_inputs(event,player.x)
     pass
 
 
 def update():
     player.update()
+    background.update()
     delay(0.04)
     pass
 
