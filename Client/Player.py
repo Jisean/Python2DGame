@@ -31,8 +31,9 @@ class Player:
 
 
     def __init__(self):
-        self.x, self.y = random.randint(100, 700), 90
+        self.x, self.y = 100, 90
         self.jumpacc = 5
+        self.speed = 10
         self.frame = random.randint(0, 27)
         self.POSRIGHT = True
         self.MOVE = False
@@ -142,10 +143,10 @@ class Player:
             self.frame = (self.frame + 1) % 27
         elif self.state == self.RIGHT_RUN:
             self.frame = (self.frame + 1) % 8
-            self.x = min(800, self.x + 5)
+            self.x = min(800, self.x + self.speed)
         elif self.state == self.LEFT_RUN:
             self.frame = (self.frame + 1) % 8
-            self.x = max(0, self.x - 5)
+            self.x = max(0, self.x - self.speed)
         elif self.state == self.LEFT_ATT or self.state == self.RIGHT_ATT or self.state == self.LEFT_UPATT or self.state == self.RIGHT_UPATT:
             self.frame = (self.frame + 1) % 2
         elif self.state == self.LEFT_UP or self.state == self.RIGHT_UP or self.state == self.LEFT_DOWN or self.state == self.RIGHT_DOWN:

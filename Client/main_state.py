@@ -7,12 +7,14 @@ from pico2d import *
 import game_framework
 import title_state
 import Player
+import Background
 
 
 
 name = "MainState"
 
 player = None
+background = None
 grass = None
 font = None
 
@@ -28,15 +30,17 @@ class Grass:
 
 
 def enter():
-    global player,grass
+    global player, grass, background
     player = Player.Player()
+    background = Background.Background()
     grass = Grass()
     pass
 
 
 def exit():
-    global player, grass
+    global player, grass, background
     del(player)
+    del(background)
     del(grass)
     pass
 
@@ -69,6 +73,7 @@ def update():
 
 def draw():
     clear_canvas()
+    background.draw()
     grass.draw()
     player.draw()
     update_canvas()
