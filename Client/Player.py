@@ -18,16 +18,16 @@ class Player:
      LEFT_ATT, RIGHT_ATT, LEFT_RUN,
      RIGHT_RUN, LEFT_STAND, RIGHT_STAND) = (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15)
 
-    MOVE = None
-    UPSIDE = None
-    DOWNSIDE = None
-    ATT = None
-    POSLEFT = None
-    POSRIGHT = None
-    PUSHLEFT = None
-    PUSHRIGHT = None
-    JUMP = None
-    FALLING = None
+    MOVE = False
+    UPSIDE = False
+    DOWNSIDE = False
+    ATT = False
+    POSLEFT = False
+    POSRIGHT = False
+    PUSHLEFT = False
+    PUSHRIGHT = False
+    JUMP = False
+    FALLING = False
 
 
     def __init__(self):
@@ -176,7 +176,7 @@ class Player:
             self.FALLING = False
             self.jumpacc = 5
         self.frames()
-        delay(0.01)
+        delay(0.02)
 
     def draw(self):
         self.image.clip_draw(self.frame * 100, self.state * 100, 100, 100, self.x, self.y)
