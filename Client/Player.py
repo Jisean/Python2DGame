@@ -33,7 +33,7 @@ class Player:
 
 
     def __init__(self):
-        self.x, self.y = 100, 90
+        self.x, self.y = 100, 240
         self.jumpacc = 5
         self.speed = 10
         self.frame = random.randint(0, 27)
@@ -168,7 +168,7 @@ class Player:
 
         elif self.state == self.LEFT_FALL or self.state == self.RIGHT_FALL:
             self.frame = (self.frame + 1) % 3
-            self.y = max(90, self.y - self.jumpacc)
+            self.y = max(240, self.y - self.jumpacc)
             if self.PUSHRIGHT == True:
                 self.x = min(800, self.x + 10)
             elif self.PUSHLEFT == True:
@@ -178,7 +178,7 @@ class Player:
 
     def update(self):
         self.states()
-        if self.y == 90:
+        if self.y == 240:
             self.FALLING = False
             self.jumpacc = 5
         self.frames()
@@ -198,4 +198,10 @@ class Player:
 
     def get_playerY(self):
         return self.y
+
+    def get_bb(self):
+        return self.x - 50, self.y - 50, self.x + 50, self.y + 50
+
+    def get_Bullet(self):
+        return bulletContainer
 

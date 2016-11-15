@@ -26,7 +26,12 @@ class Bullet:
 
     def SetPos(self, x, y):
         self.x, self.y = x, y
+
     def GetPosX(self):
         return self.x
+
     def GetPosY(self):
         return self.y
+
+    def get_bb(self):
+        return self.x - 20, self.y - 20, self.x + 20, self.y + 20

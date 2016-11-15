@@ -17,8 +17,8 @@ class Monster:
 
 
 
-    def __init__(self):
-        self.x, self.y = 300 , 90
+    def __init__(self,x,y):
+        self.x, self.y = x , y
         self.frame = random.randint(0,4)
         self.state = self.RIGHT
         self.dir = 1
@@ -41,3 +41,6 @@ class Monster:
 
     def draw(self):
         self.image.clip_draw(self.frame * 100, self.state * 100, 100, 100, self.x, self.y)
+
+    def get_bb(self):
+        return self.x - 20, self.y - 20, self.x + 20, self.y + 20
