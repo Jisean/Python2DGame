@@ -8,6 +8,7 @@ import game_framework
 import title_state
 import Player
 import Background
+from Monster import Monster
 
 
 
@@ -17,6 +18,7 @@ player = None
 background = None
 grass = None
 font = None
+monster = None
 
 
 
@@ -30,18 +32,20 @@ class Grass:
 
 
 def enter():
-    global player, grass, background
+    global player, grass, background, monster
     player = Player.Player()
     background = Background.Background()
     grass = Grass()
+    monster = Monster()
     pass
 
 
 def exit():
-    global player, grass, background
+    global player, grass, background, monster
     del(player)
     del(background)
     del(grass)
+    del(monster)
     pass
 
 
@@ -69,6 +73,7 @@ def handle_events():
 def update():
     player.update()
     background.update()
+    monster.update()
     delay(0.04)
     pass
 
@@ -78,6 +83,7 @@ def draw():
     background.draw()
     grass.draw()
     player.draw()
+    monster.draw()
     update_canvas()
     pass
 

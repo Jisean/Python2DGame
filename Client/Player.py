@@ -5,9 +5,11 @@ import os
 from pico2d import *
 
 import game_framework
+from Bullet import Bullet
 
 
 name = "Player"
+bulletContainer =[]
 
 
 class Player:
@@ -48,6 +50,7 @@ class Player:
             self.PUSHRIGHT = False
             self.POSLEFT = True
             self.POSRIGHT = False
+            self.dir = -1
                 # 왼이동
         elif(event.type, event.key) == (SDL_KEYDOWN, SDLK_RIGHT):
             self.MOVE = True
@@ -55,6 +58,7 @@ class Player:
             self.PUSHRIGHT = True
             self.POSLEFT = False
             self.POSRIGHT = True
+            self.dir = 1
                 #오른이동
         elif(event.type, event.key) == (SDL_KEYUP, SDLK_LEFT):
             self.MOVE = False
@@ -149,6 +153,8 @@ class Player:
             self.x = max(0, self.x - self.speed)
         elif self.state == self.LEFT_ATT or self.state == self.RIGHT_ATT or self.state == self.LEFT_UPATT or self.state == self.RIGHT_UPATT:
             self.frame = (self.frame + 1) % 2
+            if(self.frame == 1):
+                bulletContainer.append(Bullet(self.x, self.y, self.dir))
         elif self.state == self.LEFT_UP or self.state == self.RIGHT_UP or self.state == self.LEFT_DOWN or self.state == self.RIGHT_DOWN:
             self.frame = (self.frame + 1) % 1
         elif self.state == self.LEFT_JUMP or self.state == self.RIGHT_JUMP:
@@ -176,7 +182,20 @@ class Player:
             self.FALLING = False
             self.jumpacc = 5
         self.frames()
+        for bullet in bulletContainer:
+            bullet.update()
+            if bullet.GetPosX() > 800 or bullet.GetPosX() < 0 :
+                bulletContainer.remove(bullet)
         delay(0.02)
 
     def draw(self):
         self.image.clip_draw(self.frame * 100, self.state * 100, 100, 100, self.x, self.y)
+        for bullet in bulletContainer:
+            bullet.draw()
+
+    def get_playerX(self):
+        return self.x
+
+    def get_playerY(self):
+        return self.y
+
