@@ -57,7 +57,7 @@ def resume():
     pass
 
 
-def handle_events():
+def handle_events(frame_timezzz):
     events = get_events()
     for event in events:
         if event.type == SDL_QUIT:
@@ -80,11 +80,11 @@ def collide(a, b):
 
     return True
 
-def update():
-    player.update()
+def update(frame_time):
+    player.update(frame_time)
     background.update()
     for mob in monstercon:
-        mob.update()
+        mob.update(frame_time)
     for bullet in player.get_Bullet():
         for mob in monstercon:
             if collide(mob, bullet):
@@ -94,7 +94,7 @@ def update():
     pass
 
 
-def draw():
+def draw(frame_time):
     clear_canvas()
     background.draw()
     grass.draw()

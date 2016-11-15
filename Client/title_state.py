@@ -29,7 +29,7 @@ def exit():
     pass
 
 
-def handle_events():
+def handle_events(frame_time):
     global PosX
     events = get_events()
     for event in events:
@@ -52,7 +52,7 @@ def handle_events():
     pass
 
 
-def draw():
+def draw(frame_time):
     global PosX
     clear_canvas()
     image.draw(400,300)
@@ -62,7 +62,7 @@ def draw():
     update_canvas()
     pass
 
-def update():
+def update(frame_time):
     pass
 
 

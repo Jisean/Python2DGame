@@ -15,7 +15,7 @@ class Bullet:
             Bullet.image = load_image('Bullet.png')
 
 
-    def update(self):
+    def update(self,frame_time):
         if self.dir == 1:
             self.x = self.x + 20
         elif self.dir == -1:

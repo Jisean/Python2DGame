@@ -14,6 +14,17 @@ bulletContainer =[]
 
 class Player:
     image = None
+
+    PIXEL_PER_METER = (10.0 / 0.3)
+    RUN_SPPED_KMPH = 20.0
+    RUN_SPEED_MPM = (RUN_SPPED_KMPH * 1000.0 / 60.0)
+    RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0)
+    RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
+
+    TIME_PER_ACTION = 0.5
+    ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
+    FRAMES_PER_ACTION = 8
+
     (LEFT_FALL,RIGHT_FALL,
      LEFT_JUMP, RIGHT_JUMP, LEFT_DOWN, RIGHT_DOWN,
      LEFT_UPATT, RIGHT_UPATT,LEFT_UP, RIGHT_UP,
@@ -40,6 +51,9 @@ class Player:
         self.POSRIGHT = True
         self.MOVE = False
         self.state = self.RIGHT_STAND
+        self.life_time = 0.0
+        self.total_frames = 0.0
+        self.dir = 1
         if Player.image == None:
             Player.image = load_image('Player.png')
 
@@ -144,21 +158,21 @@ class Player:
 
     def frames(self):
         if self.state == self.RIGHT_STAND or self.state == self.LEFT_STAND:
-            self.frame = (self.frame + 1) % 27
+            self.frame = int(self.total_frames) % 27
         elif self.state == self.RIGHT_RUN:
-            self.frame = (self.frame + 1) % 8
+            self.frame = int(self.total_frames) % 8
             self.x = min(800, self.x + self.speed)
         elif self.state == self.LEFT_RUN:
-            self.frame = (self.frame + 1) % 8
+            self.frame = int(self.total_frames) % 8
             self.x = max(0, self.x - self.speed)
         elif self.state == self.LEFT_ATT or self.state == self.RIGHT_ATT or self.state == self.LEFT_UPATT or self.state == self.RIGHT_UPATT:
-            self.frame = (self.frame + 1) % 2
+            self.frame = int(self.total_frames) % 2
             if(self.frame == 1):
                 bulletContainer.append(Bullet(self.x, self.y, self.dir))
         elif self.state == self.LEFT_UP or self.state == self.RIGHT_UP or self.state == self.LEFT_DOWN or self.state == self.RIGHT_DOWN:
-            self.frame = (self.frame + 1) % 1
+            self.frame = int(self.total_frames) % 1
         elif self.state == self.LEFT_JUMP or self.state == self.RIGHT_JUMP:
-            self.frame = (self.frame + 1) % 9
+            self.frame = int(self.total_frames) % 9
             self.jumpacc = self.jumpacc + 2
             self.y = self.y + self.jumpacc
             if self.PUSHRIGHT == True:
@@ -167,7 +181,7 @@ class Player:
                 self.x = max(0, self.x - 10)
 
         elif self.state == self.LEFT_FALL or self.state == self.RIGHT_FALL:
-            self.frame = (self.frame + 1) % 3
+            self.frame = int(self.total_frames) % 3
             self.y = max(240, self.y - self.jumpacc)
             if self.PUSHRIGHT == True:
                 self.x = min(800, self.x + 10)
@@ -176,17 +190,22 @@ class Player:
 
 
 
-    def update(self):
+    def update(self, frame_time):
         self.states()
         if self.y == 240:
             self.FALLING = False
             self.jumpacc = 5
-        self.frames()
+
         for bullet in bulletContainer:
-            bullet.update()
+            bullet.update(frame_time)
             if bullet.GetPosX() > 800 or bullet.GetPosX() < 0 :
                 bulletContainer.remove(bullet)
-        delay(0.02)
+
+        self.life_time += frame_time
+        distance = self.RUN_SPEED_PPS * frame_time
+        self.total_frames += self.FRAMES_PER_ACTION * self.ACTION_PER_TIME * frame_time
+        self.frames()
+        #delay(0.02)
 
     def draw(self):
         self.image.clip_draw(self.frame * 100, self.state * 100, 100, 100, self.x, self.y)
