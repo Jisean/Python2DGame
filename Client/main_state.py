@@ -8,6 +8,7 @@ import game_framework
 import title_state
 import Player
 import Background
+from Terrain import Terrain
 from Monster import Monster
 
 
@@ -16,36 +17,44 @@ name = "MainState"
 
 player = None
 background = None
-grass = None
 font = None
 monstercon = []
-
-
-
-class Grass:
-    def __init__(self):
-        self.image = load_image('stagetile.png')
-
-    def draw(self):
-        self.image.draw(400, 300)
+terraincon = []
 
 
 
 def enter():
-    global player, grass, background,monstercon
+    global player, terrain, background, monstercon, terraincon, font
+    font = load_font('ComicSans.ttf')
+    terrain_data_file = open('terrain_data.txt')
+    terrain_data = json.load(terrain_data_file)
+    terrain_data_file.close()
+
     player = Player.Player()
     background = Background.Background()
-    grass = Grass()
+
+    background.set_center_object(player)
+    player.set_background(background)
+
+    for terrain_num in terrain_data :
+        terrain = Terrain(terrain_data[terrain_num]['num'],terrain_data[terrain_num]['x'],terrain_data[terrain_num]['y'])
+        print(terrain_data[terrain_num])
+        terrain.set_background(background)
+        terraincon.append(terrain)
+
     monstercon = [Monster(100+(35*i), 240) for i in range(2)]
+    for monster in monstercon:
+        monster.set_background(background)
     pass
 
 
 def exit():
-    global player, grass, background, monstercon
+    global player, terraincon, background, monstercon, font
     del(player)
     del(background)
-    del(grass)
+    del(terraincon)
     del(monstercon)
+    del(font)
     pass
 
 
@@ -90,6 +99,21 @@ def update(frame_time):
             if collide(mob, bullet):
                 player.get_Bullet().remove(bullet)
                 monstercon.remove(mob)
+    for terrain in terraincon:
+        terrain.update(frame_time)
+        if collide(player,terrain) :
+            if terrain.tilenum == 1 :
+                player.y = terrain.y + 70
+            if terrain.tilenum == 2 :
+                player.y = terrain.y + 50
+            if terrain.tilenum == 3:
+                player.y = terrain.y + 30
+            if terrain.tilenum == 4:
+                player.y = terrain.y + 160
+            if terrain.tilenum == 5:
+                player.y = terrain.y + 100
+            player.FALLING = False
+            player.jumpacc = 5
     delay(0.04)
     pass
 
@@ -97,8 +121,13 @@ def update(frame_time):
 def draw(frame_time):
     clear_canvas()
     background.draw()
-    grass.draw()
+    for terrain in terraincon:
+        terrain.draw()
+        terrain.draw_bb()
     player.draw()
+    player.draw_bb()
+    font.draw(20,60,'x: %d' % player.x)
+    font.draw(20,20,'y: %d' % player.y)
     for mob in monstercon:
         mob.draw()
     update_canvas()

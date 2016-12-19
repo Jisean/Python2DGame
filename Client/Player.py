@@ -44,9 +44,9 @@ class Player:
 
 
     def __init__(self):
-        self.x, self.y = 100, 240
+        self.x, self.y = 100, 350
         self.jumpacc = 5
-        self.speed = 10
+        self.speed = 5
         self.frame = random.randint(0, 27)
         self.POSRIGHT = True
         self.MOVE = False
@@ -173,7 +173,7 @@ class Player:
             self.frame = int(self.total_frames) % 1
         elif self.state == self.LEFT_JUMP or self.state == self.RIGHT_JUMP:
             self.frame = int(self.total_frames) % 9
-            self.jumpacc = self.jumpacc + 2
+            self.jumpacc = self.jumpacc + 1
             self.y = self.y + self.jumpacc
             if self.PUSHRIGHT == True:
                 self.x = min(800, self.x + 10)
@@ -182,7 +182,7 @@ class Player:
 
         elif self.state == self.LEFT_FALL or self.state == self.RIGHT_FALL:
             self.frame = int(self.total_frames) % 3
-            self.y = max(240, self.y - self.jumpacc)
+            self.y = max(90, self.y - self.jumpacc)
             if self.PUSHRIGHT == True:
                 self.x = min(800, self.x + 10)
             elif self.PUSHLEFT == True:
@@ -192,9 +192,9 @@ class Player:
 
     def update(self, frame_time):
         self.states()
-        if self.y == 240:
-            self.FALLING = False
-            self.jumpacc = 5
+        if self.JUMP == False:
+            self.FALLING = True
+            self.jumpacc = 10
 
         for bullet in bulletContainer:
             bullet.update(frame_time)
@@ -219,8 +219,14 @@ class Player:
         return self.y
 
     def get_bb(self):
-        return self.x - 50, self.y - 50, self.x + 50, self.y + 50
+        return self.x - 25, self.y - 50, self.x + 25 , self.y
 
     def get_Bullet(self):
         return bulletContainer
+
+    def draw_bb(self):
+        draw_rectangle(*self.get_bb())
+
+    def set_background(self, bg):
+        self.bg = bg
 

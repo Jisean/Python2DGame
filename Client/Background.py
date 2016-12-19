@@ -20,12 +20,17 @@ class Background:
     RightKey = False
 
     def __init__(self):
+        if Background.image == None:
+            Background.image = load_image('Stage1BG.png')
         self.x, self.y = 100,300
         self.speed = 0
         self.left = 0
+        self.canvas_width = get_canvas_width()
+        self.canvas_height = get_canvas_height()
+        self.w = self.image.w
+        self.h = self.image.h
 
-        if Background.image == None:
-            Background.image = load_image('Stage1BG.png')
+
 
     def handle_inputs(self, event, x):
         if (event.type, event.key) == (SDL_KEYDOWN, SDLK_LEFT):
@@ -42,6 +47,8 @@ class Background:
             self.ScrollX += 20
         if self.RightKey == True:
             self.ScrollX -= 20
+        self.window_left = clamp(0, int(self.center_object.x) - self.ScrollX // 2, self.w - self.ScrollX)
+        self.window_bottom = clamp(0, int(self.center_object.y) - self.canvas_height // 2, self.h - self.canvas_height)
 
 
     def draw(self):
@@ -52,3 +59,6 @@ class Background:
                 self.image.draw((self.ScrollX * 0.1) + 800 * self.x, 300)
             else:
                 self.image.draw((self.ScrollX * 0.1) + 800 * self.x, 300)
+
+    def set_center_object(self, object):
+        self.center_object = object
