@@ -10,6 +10,8 @@ import Player
 import Background
 from Terrain import Terrain
 from Monster import Monster
+from Hunter import Hunter
+from Boss import Boss
 
 
 
@@ -18,14 +20,34 @@ name = "MainState"
 player = None
 background = None
 font = None
+bgm = None
+mobsound = None
+bosssound1 = None
+bosssound2 = None
 monstercon = []
 terraincon = []
+huntercon = []
+bosscon = []
+timer = 0
 
 
 
 def enter():
-    global player, terrain, background, monstercon, terraincon, font
+    global player, terrain, background, monstercon, terraincon, font, huntercon, boss, timer, bgm, mobsound, bosssound1, bosssound2
     font = load_font('ComicSans.ttf')
+    bgm = load_music('stage.mp3')
+    bgm.set_volume(64)
+    bgm.repeat_play()
+
+    mobsound = load_wav('monsterdead.wav')
+    mobsound.set_volume(32)
+
+    bosssound1 = load_wav('bosshit.wav')
+    bosssound1.set_volume(32)
+
+    bosssound2 = load_wav('bossdie.wav')
+    bosssound2.set_volume(32)
+
     terrain_data_file = open('terrain_data.txt')
     terrain_data = json.load(terrain_data_file)
     terrain_data_file.close()
@@ -35,26 +57,50 @@ def enter():
 
     background.set_center_object(player)
     player.set_background(background)
+    player.set_font(font)
 
     for terrain_num in terrain_data :
         terrain = Terrain(terrain_data[terrain_num]['num'],terrain_data[terrain_num]['x'],terrain_data[terrain_num]['y'])
-        print(terrain_data[terrain_num])
         terrain.set_background(background)
         terraincon.append(terrain)
 
-    monstercon = [Monster(100+(35*i), 240) for i in range(2)]
+    monstercon = [Monster(300+(80*i), (240-(20*i))) for i in range(4)]
     for monster in monstercon:
         monster.set_background(background)
+
+    hunter1 = Hunter(650,170)
+    hunter1.set_background(background)
+    hunter1.set_player(player)
+
+    hunter2 = Hunter(1200, 210)
+    hunter2.set_background(background)
+    hunter2.set_player(player)
+
+    huntercon.append(hunter1)
+    huntercon.append(hunter2)
+
+    boss = Boss(2350,380)
+    boss.set_background(background)
+    boss.set_player(player)
+    boss.set_font(font)
+    bosscon.append(boss)
+
+
     pass
 
 
 def exit():
-    global player, terraincon, background, monstercon, font
+    global player, terraincon, background, monstercon, font, huntercon, boss, bgm
+    bgm.stop()
+    del(bgm)
     del(player)
     del(background)
     del(terraincon)
     del(monstercon)
+    del(huntercon)
     del(font)
+    if boss != None :
+        del(boss)
     pass
 
 
@@ -66,7 +112,7 @@ def resume():
     pass
 
 
-def handle_events(frame_timezzz):
+def handle_events(frame_time):
     events = get_events()
     for event in events:
         if event.type == SDL_QUIT:
@@ -75,7 +121,7 @@ def handle_events(frame_timezzz):
             game_framework.change_state(title_state)
         else:
             player.handle_inputs(event)
-            background.handle_inputs(event,player.x)
+            background.handle_inputs(event)
     pass
 
 def collide(a, b):
@@ -99,6 +145,33 @@ def update(frame_time):
             if collide(mob, bullet):
                 player.get_Bullet().remove(bullet)
                 monstercon.remove(mob)
+                mobsound.play(1)
+                player.score += 20
+        for hunter in huntercon:
+            if collide(hunter, bullet):
+                player.get_Bullet().remove(bullet)
+                huntercon.remove(hunter)
+                mobsound.play(1)
+                player.score += 50
+        for boss in bosscon:
+            if collide(boss, bullet) :
+                player.get_Bullet().remove(bullet)
+                boss.HP -= 1
+                bosssound1.play(1)
+                if(boss.HP <=0) :
+                    bosssound2.play(1)
+                    bosscon.remove(boss)
+                    player.score += 500
+
+    for hunter in huntercon:
+        for mobbullet in hunter.get_Bullet() :
+            if collide(player,mobbullet) :
+                hunter.get_Bullet().remove(mobbullet)
+                player.HP -= 1
+                if player.HP <=0 :
+                    player.HP = 10
+                    player.x, player.y = 100, 150
+                    player.score -= 50
     for terrain in terraincon:
         terrain.update(frame_time)
         if collide(player,terrain) :
@@ -114,6 +187,21 @@ def update(frame_time):
                 player.y = terrain.y + 100
             player.FALLING = False
             player.jumpacc = 5
+    for hunter in huntercon:
+        hunter.update(frame_time)
+
+    for boss in bosscon:
+        boss.update(frame_time)
+        for mobbullet in boss.get_Bullet() :
+            if collide(player,mobbullet) :
+                boss.get_Bullet().remove(mobbullet)
+                player.HP -= 1
+                if player.HP <=0 :
+                    player.HP = 10
+                    player.x, player.y = 100, 150
+                    player.score -= 50
+
+
     delay(0.04)
     pass
 
@@ -123,13 +211,13 @@ def draw(frame_time):
     background.draw()
     for terrain in terraincon:
         terrain.draw()
-        terrain.draw_bb()
     player.draw()
-    player.draw_bb()
-    font.draw(20,60,'x: %d' % player.x)
-    font.draw(20,20,'y: %d' % player.y)
     for mob in monstercon:
         mob.draw()
+    for hunter in huntercon:
+        hunter.draw()
+    for boss in bosscon:
+        boss.draw()
     update_canvas()
     pass
 

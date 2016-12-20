@@ -8,24 +8,30 @@ image = None
 start = None
 esc = None
 cursor = None
+bgm = None
 PosX = 100
 
 
 def enter():
-    global image, start, esc, cursor
+    global image, start, esc, cursor, bgm
     image = load_image('title.png')
     start = load_image('Start.png')
     esc = load_image('Exit.png')
     cursor = load_image('Cursor.png')
+    bgm = load_music('menu.mp3')
+    bgm.set_volume(64)
+    bgm.repeat_play()
     pass
 
 
 def exit():
-    global image, start, esc, cursor
+    global image, start, esc, cursor, bgm
+    bgm.stop()
     del(image)
     del(start)
     del(esc)
     del(cursor)
+    del(bgm)
     pass
 
 

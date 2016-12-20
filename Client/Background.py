@@ -32,7 +32,7 @@ class Background:
 
 
 
-    def handle_inputs(self, event, x):
+    def handle_inputs(self, event):
         if (event.type, event.key) == (SDL_KEYDOWN, SDLK_LEFT):
             self.LeftKey = True
         elif (event.type, event.key) == (SDL_KEYUP, SDLK_LEFT):

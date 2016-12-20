@@ -30,6 +30,9 @@ class Monster:
 
     def __init__(self,x,y):
         self.x, self.y = x , y
+        self.startx, self.starty = x, y
+        self.sx = x
+        self.sy = y
         self.frame = random.randint(0,4)
         self.state = self.RIGHT
         self.life_time = 0.0
@@ -47,22 +50,29 @@ class Monster:
 
         self.frame = int(self.total_frames) % 4
         self.x += (self.dir * 5)
-        if self.x > 800:
+
+        self.sx = self.x - self.bg.window_left / 2
+        self.sy = self.y - self.bg.window_bottom / 2
+
+        if self.x > self.startx + 200:
             self.dir = -1
-            self.x = 800
+            self.x = self.startx + 200
             self.state = self.LEFT
-        elif self.x < 0:
+        elif self.x < self.startx - 200:
             self.dir = 1
-            self.x = 0
+            self.x = self.startx - 200
             self.state = self.RIGHT
 
         #delay(0.02)
 
     def draw(self):
-        self.image.clip_draw(self.frame * 100, self.state * 100, 100, 100, self.x, self.y)
+        self.image.clip_draw(self.frame * 100, self.state * 100, 100, 100, self.sx, self.sy)
+
+    def draw_bb(self):
+        draw_rectangle(*self.get_bb())
 
     def get_bb(self):
-        return self.x - 20, self.y - 20, self.x + 20, self.y + 20
+        return self.sx - 20, self.sy - 20, self.sx + 20, self.sy + 20
 
     def set_background(self, bg):
         self.bg = bg
